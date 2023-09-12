@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenGauss客户端</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</head>
+<style>
+    .menu {
+        width: 100px;
+        font-size: 14px;
+        font-family: "微软雅黑";
+        border: 1px solid #ccc;
+        z-index: 9999;
+        position: absolute;
+        display: none;
+        background: #f2f2f2;
+    }
+
+    .menu ul {
+        margin: 0px;
+        padding: 0px;
+        text-align: center;
+        list-style-type: none;
+    }
+
+    .menu ul li {
+        padding: 3px 0px;
+        font-size: 12px;
+    }
+
+    .menu ul li:hover {
+        background: #e1dddd;
+    }
+
+    .menu ul li a:link {
+        color: #000;
+        text-decoration: none;
+    }
+    .first,.second{
+        border:1px solid lightblue;
+    }
+    .big{
+        display: flex;
+        height: 600px;
+    }
+    .first{
+        flex: 1;
+    }
+    .second{
+        flex: 4;
+        display: flex;
+    }
+    .connection:hover{
+        font-weight: bold;
+    }
+    #divmenu:hover{
+        cursor: pointer;
+    }
+    .one{
+        flex: 1;
+        border: 1px solid lightgray;
+    }
+    .two{
+        flex: 6;
+        /*border: 1px solid lightgray;*/
+        display: flex;
+        flex-direction: column;
+    }
+    .two:first-child{
+        flex: 3;
+        background-color: red;
+    }
+    .two:nth-child(1){
+        flex: 5;
+        background-color: blue;
+    }
+    #oneul>li:hover{
+        cursor: pointer;
+        font-weight: bold;
+        color: red;
+    }
+
+</style>
+<body>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <table style="height: 100%;width: 100%;margin-top: 20px;" border="3">
+                    <tr>
+                        <td>数据库类型</td>
+                        <td><select name="dbKind" id="dbKind">
+                            <option value="OpenGauss">OpenGauss</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td>数据库IP</td>
+                        <td><input id="ip" type="text" name="ip" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td>端口号</td>
+                        <td><input id="port" type="text" name="port" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td>用户名</td>
+                        <td><input id="username" type="text" name="username" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td>密码</td>
+                        <td><input id="password" type="password" name="password" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td>数据库</td>
+                        <td><input id="databases" type="text" name="databases" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td>模式</td>
+                        <td><input id="modes" type="text" name="modes" required><span style="color: red;">*必填项</span></td>
+                    </tr>
+                    <tr>
+                        <td><input id="test" type="button" value="测试连接"><span style="color: red;">*必选项</span></td>
+                    </tr>
+            </table>
+            <div class="modal-footer">
+                <button id="close" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button disabled id="addMode" type="button" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="big">
+    <div class="first">
+        <button style="margin:20px auto;margin-left: 20%;" type="button"
+                data-toggle="modal" data-target="#myModal" class="btn btn-primary">新增OpenGauss连接</button>
+        <a href="#" class="list-group-item active">
+            模式列表
+        </a>
+
+    </div>
+    <div class="second">
+            <div class="one"  style="overflow: scroll;">
+                <ul id="oneul" style="margin-top: 10px;list-style: none;margin-left: -15%;">
+
+                </ul>
+            </div>
+            <div class="two">
+                <nav style="width: 100%;height: 30%;">
+                    <textarea style="width: 100%;height: 80%;" placeholder="输入OpenGauss的SQL语句..."></textarea>
+                    <button id="execute" type="button" class="btn btn-primary"
+                            style="float: right;margin-right: 3%;">执行SQL</button>
+                </nav>
+                <nav id="result" style="overflow:auto;width: 100%;height: 70%;border: 1px solid lightskyblue;margin-top: 1%;">
+                    暂未结果
+                </nav>
+            </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">连接属性</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>数据库IP</td>
+                        <td id="sjkip"></td>
+                    </tr>
+                    <tr>
+                        <td>端口号</td>
+                        <td id="dkh"></td>
+                    </tr>
+                    <tr>
+                        <td>用户名</td>
+                        <td id="yhm"></td>
+                    </tr>
+                    <tr>
+                        <td>密码</td>
+                        <td id="mima">******</td>
+                    </tr>
+                    <tr>
+                        <td>数据库</td>
+                        <td id="sjk"></td>
+                    </tr>
+                    <tr>
+                        <td>模式</td>
+                        <td id="ms"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="close1" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+<!--  查询连接列表  -->
+    $(function (){
+        showList();
+    });
+
+function showList(){
+    $.get(
+        "/mode/modeList",
+        function (data) {
+            for(var i=0;i<data.length;i++){
+                $(".first").append("<a href=\"#\" class=\"list-group-item connection\">"+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"" +
+                    "<br/>\n" +
+                    "            <button onclick='tableList(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-info btn-xs\">查看列表</button>\n" +
+                    "            <button  data-toggle=\"modal\" data-target=\"#myModal1\" onclick='connectQuery(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-warning btn-xs\">查看连接属性</button>\n" +
+                    "            <button onclick='delete1(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")' type=\"button\" class=\"btn btn-danger btn-xs\">删除连接</button></a>");
+            }
+        }
+    );
+}
+<!-- 数据库连接测试 -->
+    $("#test").click(function (){
+        var ip = $("#ip").val();
+        var port = $("#port").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var databases = $("#databases").val();
+        var modes = $("#modes").val();
+        if(ip==""||port==""||username==""||password==""||databases==""||modes==""){
+            alert("ip/端口号/用户名/密码/数据库/模式均不可为空");
+            return;
+        }
+        $.get(
+            "/mode/testConnection?ip="+ip+"&port="+port+"&username="+username+"&password="+password +
+            "&db="+databases+"&mode="+modes,
+            function (data) {
+                if(data==1){
+                    alert("连接成功");
+                    $("#addMode").removeAttr("disabled");
+                }else{
+                    alert("测试连接失败");
+                }
+            }
+        );
+    });
+
+<!--  新增模式  -->
+    $("#addMode").click(function (){
+        var ip = $("#ip").val();
+        var port = $("#port").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var databases = $("#databases").val();
+        var modes = $("#modes").val();
+        if(ip==""||port==""||username==""||password==""||databases==""||modes==""){
+            alert("ip/端口号/用户名/密码/数据库/模式均不可为空");
+            return;
+        }
+        $.ajax({
+            url : "/mode/addMode",
+            type : "post",
+            data :JSON.stringify({ip:ip,port:port,username:username,password:password,dataBaseName:databases,
+                modeName:modes}),
+            contentType : "application/json;charset=UTF-8",
+            dataType : "json",
+            success : function(data){
+                if(data == 1){
+                    // alert("新增连接成功");
+                    $("#myModal").hide();
+                    location.href = "/page/index";
+                }else{
+                    alert("新增连接失败");
+                }
+            }
+        });
+    });
+
+//当前数据库连接信息
+var currentConnection = "";
+
+    $("#execute").click(function (){
+        if(currentConnection == ""){
+            alert("请先选择连接！")
+        }else if($("textarea").val()==""){
+            alert("SQL为空！")
+        }else{
+            $.get(
+                "/mode/executeSql?text="+currentConnection+"&sql="+$("textarea").val(),
+                function (data) {
+                    if(data.code == -1){
+                        $("#result").html(data.errorMsg);
+                    }else{
+                        var tempStr = '<table class="table"><thead><tr>';
+                        //表头
+                        for(let key in data.list[0]){
+                            tempStr+='<th>'+key+'</th>';
+                        }
+                        tempStr+='</tr></thead><tbody>';
+                        //表数据
+                        for(var k = 0;k<data.list.length; k++){
+                            tempStr+='<tr>';
+                            for(let key in data.list[k]){
+                                console.log(key + "---" +data.list[k][key])
+                                tempStr+='<td>'+data.list[k][key]+'</td>';
+                            }
+                            tempStr+='</tr>';
+                        }
+                        tempStr+='</tbody></table>';
+                        $("#result").html(tempStr);
+                    }
+                }
+            );
+        }
+    });
+
+    function tableList(e){
+        currentConnection = e;
+       $.get(
+           "/mode/getTables?text="+e,
+           function (data) {
+               var tempUrl = "";
+               for(var i=0;i<data.length;i++){
+                   tempUrl+="<li onclick=query('\""+data[i]+"\"')><img src='/table.png' style=\"width: 20px;height: 20px;\" />&nbsp;"+data[i]+"</li>";
+               }
+               $("#oneul").html(tempUrl);
+           }
+       );
+    }
+    function query(e){
+        $("textarea").val("select * from " + e + ";");
+        $.get(
+            "/mode/executeSql?text="+currentConnection+"&sql="+$("textarea").val(),
+            function (data) {
+                if(data.code == -1){
+                    $("#result").html(data.errorMsg);
+                }else{
+                    var tempStr = '<table class="table"><thead><tr>';
+                    //表头
+                    for(let key in data.list[0]){
+                        tempStr+='<th>'+key+'</th>';
+                    }
+                    tempStr+='</tr></thead><tbody>';
+                    //表数据
+                    for(var k = 0;k<data.list.length; k++){
+                        tempStr+='<tr>';
+                        for(let key in data.list[k]){
+                            console.log(key + "---" +data.list[k][key])
+                            tempStr+='<td>'+data.list[k][key]+'</td>';
+                        }
+                        tempStr+='</tr>';
+                    }
+                    tempStr+='</tbody></table>';
+                    $("#result").html(tempStr);
+                }
+            }
+        );
+
+    }
+    function connectQuery(e){
+        $.get(
+            "/mode/getModeByText?text="+e,
+            function (data) {
+                $("#sjkip").html(data.ip);
+                $("#dkh").html(data.port);
+                $("#yhm").html(data.username);
+                $("#sjk").html(data.dataBaseName);
+                $("#ms").html(data.modeName);
+            }
+        );
+    }
+
+    function delete1(e) {
+        var msg=confirm("确定吗？亲~~");
+        if(msg==true){
+            $.get(
+                "/mode/deleteMode?text="+e,
+                function (data) {
+                    if(data == 1){
+                        alert("删除成功");
+                        location.href = "/page/index";
+                    }else{
+                        alert("删除失败");
+                    }
+                }
+            );
+        }
+    }
+
+</script>
+</body>
+</html>
