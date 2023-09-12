@@ -8,8 +8,8 @@ SpringBoot + Thymeleaf
 
 
 #### 安装教程
-
-java -jar xxx.jar 直接运行
+1. java -jar xxx.jar 直接运行
+2. 打开浏览器输入[http://127.0.0.1:8080/page/index#](http://127.0.0.1:8080/page/index#)使用即可
 
 #### 使用说明
 ![输入图片说明](OpenGaussClient/%E6%96%B0%E5%A2%9E%E8%BF%9E%E6%8E%A5.png)
