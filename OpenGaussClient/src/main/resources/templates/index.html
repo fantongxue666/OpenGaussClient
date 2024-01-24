@@ -44,7 +44,8 @@
     }
     .big{
         display: flex;
-        height: 600px;
+        height: 100vh;
+        overflow: hidden;
     }
     .first{
         flex: 1;
@@ -68,6 +69,7 @@
         /*border: 1px solid lightgray;*/
         display: flex;
         flex-direction: column;
+        overflow: hidden;
     }
     .two:first-child{
         flex: 3;
@@ -76,13 +78,16 @@
     .two:nth-child(1){
         flex: 5;
         background-color: blue;
+        overflow: scroll;
     }
     #oneul>li:hover{
         cursor: pointer;
         font-weight: bold;
         color: red;
     }
-
+.table td{
+    /*white-space: nowrap;*/
+}
 </style>
 <body>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -147,11 +152,11 @@
             </div>
             <div class="two">
                 <nav style="width: 100%;height: 30%;">
-                    <textarea style="width: 100%;height: 80%;" placeholder="输入OpenGauss的SQL语句..."></textarea>
+                    <textarea style="width: 100%;height: 80%;font-size: 23px;" placeholder="输入OpenGauss的SQL语句..."></textarea>
                     <button id="execute" type="button" class="btn btn-primary"
                             style="float: right;margin-right: 3%;">执行SQL</button>
                 </nav>
-                <nav id="result" style="overflow:auto;width: 100%;height: 70%;border: 1px solid lightskyblue;margin-top: 1%;">
+                <nav id="result" style="overflow-x:auto;height: 70%;border: 1px solid lightskyblue;margin-top: 1%;">
                     暂未结果
                 </nav>
             </div>
@@ -269,7 +274,7 @@ function showList(){
                 if(data == 1){
                     // alert("新增连接成功");
                     $("#myModal").hide();
-                    location.href = "/page/index";
+                    location.href = "/";
                 }else{
                     alert("新增连接失败");
                 }
@@ -292,7 +297,7 @@ var currentConnection = "";
                     if(data.code == -1){
                         $("#result").html(data.errorMsg);
                     }else{
-                        var tempStr = '<table class="table"><thead><tr>';
+                        var tempStr = '<table style="" class="table"><thead><tr>';
                         //表头
                         for(let key in data.list[0]){
                             tempStr+='<th>'+key+'</th>';
@@ -336,7 +341,7 @@ var currentConnection = "";
                 if(data.code == -1){
                     $("#result").html(data.errorMsg);
                 }else{
-                    var tempStr = '<table class="table"><thead><tr>';
+                    var tempStr = '<table style="" class="table"><thead><tr>';
                     //表头
                     for(let key in data.list[0]){
                         tempStr+='<th>'+key+'</th>';
@@ -379,7 +384,7 @@ var currentConnection = "";
                 function (data) {
                     if(data == 1){
                         alert("删除成功");
-                        location.href = "/page/index";
+                        location.href = "/";
                     }else{
                         alert("删除失败");
                     }
