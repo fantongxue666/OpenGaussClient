@@ -45,7 +45,7 @@ public class ModeController {
      */
     @GetMapping("/deleteMode")
     public int deleteMode(String text){
-        String[] s1 = text.split("_");
+        String[] s1 = text.split(">");
         String ip = s1[0];
         String db = s1[1];
         String mode = s1[2];
@@ -92,7 +92,7 @@ public class ModeController {
     @RequestMapping("/getModeByText")
     @ResponseBody
     public Mode getModeByText(String text){
-        String[] s1 = text.split("_");
+        String[] s1 = text.split(">");
         String ip = s1[0];
         String db = s1[1];
         String mode = s1[2];
@@ -111,7 +111,7 @@ public class ModeController {
     @RequestMapping("/getTables")
     @ResponseBody
     public List<String> getDataBases(String text) throws Exception {
-        String[] s1 = text.split("_");
+        String[] s1 = text.split(">");
         String ip = s1[0];
         String db = s1[1];
         String mode = s1[2];
@@ -137,13 +137,21 @@ public class ModeController {
     }
 
     //执行sql
-    @RequestMapping("executeSql")
+    @PostMapping("executeSql")
     @ResponseBody
-    public JSONObject executeSql(String text, String sql) throws Exception {
-        String[] s1 = text.split("_");
+    public JSONObject executeSql(@RequestBody JSONObject jsonObject) throws Exception {
+        String text = jsonObject.getString("text");
+        String sql = jsonObject.getString("sql");
+        String[] s1 = text.split(">");
         String ip = s1[0];
         String db = s1[1];
         String mode = s1[2];
+        String tableName = "'" + sql.substring(1,sql.length() - 1) + "'";
+        if(sql.indexOf(" ") < 0){
+            sql = "SELECT column_name, data_type, character_maximum_length, is_nullable\n" +
+                    "FROM information_schema.columns\n" +
+                    "WHERE table_catalog = '"+db+"' AND table_schema = '"+mode+"' AND table_name = "+tableName+";";
+        }
         List<Mode> modeList = LocalDataBase.modeList.stream().filter(s -> {
             if(StringUtils.equals(ip,s.getIp())&&StringUtils.equals(db,s.getDataBaseName())
                     &&StringUtils.equals(mode,s.getModeName())){
@@ -160,8 +168,13 @@ public class ModeController {
         JSONObject result = new JSONObject();
         try {
             List<JSONObject> jsonObjects = DataBaseUtils.executeSql(connection, sql);
-            result.put("code",0);
-            result.put("list",jsonObjects);
+            if(jsonObjects == null || jsonObjects.size() == 0){
+                result.put("code",-1);
+                result.put("errorMsg","此表为空表，就是一条数据都没有，明白吧？！");
+            }else{
+                result.put("code",0);
+                result.put("list",jsonObjects);
+            }
         } catch (Exception e) {
             result.put("code",-1);
             result.put("errorMsg",e.getMessage());

@@ -88,8 +88,186 @@
 .table td{
     /*white-space: nowrap;*/
 }
+    #fountainG {
+        position: fixed;
+        margin: 20% auto 0% 43%;
+    }
+
+    .fountainG{
+        position:absolute;
+        top:0;
+        background-color:#33cc99;
+        width:20px;
+        height:20px;
+        -webkit-animation:bounce_fountainG 1.3s infinite normal;
+        -moz-animation:bounce_fountainG 1.3s infinite normal;
+        -o-animation:bounce_fountainG 1.3s infinite normal;
+        -ms-animation:bounce_fountainG 1.3s infinite normal;
+        animation:bounce_fountainG 0.8s infinite normal;
+        -moz-transform:scale(.3);
+        -webkit-transform:scale(.3);
+        -ms-transform:scale(.3);
+        -o-transform:scale(.3);
+        transform:scale(.3);
+        border-radius:19px;
+    }
+
+    #fountainG_1{
+        left:0;
+        -moz-animation-delay:0.52s;
+        -webkit-animation-delay:0.52s;
+        -ms-animation-delay:0.52s;
+        -o-animation-delay:0.52s;
+        animation-delay:0.52s;
+    }
+
+    #fountainG_2{
+        left:30px;
+        -moz-animation-delay:0.65s;
+        -webkit-animation-delay:0.65s;
+        -ms-animation-delay:0.65s;
+        -o-animation-delay:0.65s;
+        animation-delay:0.65s;
+    }
+
+    #fountainG_3{
+        left:60px;
+        -moz-animation-delay:0.78s;
+        -webkit-animation-delay:0.78s;
+        -ms-animation-delay:0.78s;
+        -o-animation-delay:0.78s;
+        animation-delay:0.78s;
+    }
+
+    #fountainG_4{
+        left:90px;
+        -moz-animation-delay:0.91s;
+        -webkit-animation-delay:0.91s;
+        -ms-animation-delay:0.91s;
+        -o-animation-delay:0.91s;
+        animation-delay:0.91s;
+    }
+
+    #fountainG_5{
+        left:120px;
+        -moz-animation-delay:1.04s;
+        -webkit-animation-delay:1.04s;
+        -ms-animation-delay:1.04s;
+        -o-animation-delay:1.04s;
+        animation-delay:1.04s;
+    }
+
+    #fountainG_6{
+        left:150px;
+        -moz-animation-delay:1.17s;
+        -webkit-animation-delay:1.17s;
+        -ms-animation-delay:1.17s;
+        -o-animation-delay:1.17s;
+        animation-delay:1.17s;
+    }
+
+    #fountainG_7{
+        left:180px;
+        -moz-animation-delay:1.3s;
+        -webkit-animation-delay:1.3s;
+        -ms-animation-delay:1.3s;
+        -o-animation-delay:1.3s;
+        animation-delay:1.3s;
+    }
+
+    #fountainG_8{
+        left:210px;
+        -moz-animation-delay:1.43s;
+        -webkit-animation-delay:1.43s;
+        -ms-animation-delay:1.43s;
+        -o-animation-delay:1.43s;
+        animation-delay:1.43s;
+    }
+
+    @-moz-keyframes bounce_fountainG{
+        0%{
+            -moz-transform:scale(1);
+            background-color:#33cc99;
+        }
+
+        100%{
+            -moz-transform:scale(.3);
+            background-color:#0099cc;
+        }
+
+    }
+
+    @-webkit-keyframes bounce_fountainG{
+        0%{
+            -webkit-transform:scale(1);
+            background-color:#33cc99;
+        }
+
+        100%{
+            -webkit-transform:scale(.3);
+            background-color:#0099cc;
+        }
+
+    }
+
+    @-ms-keyframes bounce_fountainG{
+        0%{
+            -ms-transform:scale(1);
+            background-color:#33cc99;
+        }
+
+        100%{
+            -ms-transform:scale(.3);
+            background-color:#0099cc;
+        }
+
+    }
+
+    @-o-keyframes bounce_fountainG{
+        0%{
+            -o-transform:scale(1);
+            background-color:#33cc99;
+        }
+
+        100%{
+            -o-transform:scale(.3);
+            background-color:#0099cc;
+        }
+
+    }
+
+    @keyframes bounce_fountainG{
+        0%{
+            transform:scale(1);
+            background-color:#33cc99;
+        }
+
+        100%{
+            transform:scale(.3);
+            background-color:#0099cc;
+        }
+
+    }
 </style>
 <body>
+<div id="fountainG">
+    <div id="fountainG_1" class="fountainG">
+    </div>
+    <div id="fountainG_2" class="fountainG">
+    </div>
+    <div id="fountainG_3" class="fountainG">
+    </div>
+    <div id="fountainG_4" class="fountainG">
+    </div>
+<!--    <div id="fountainG_5" class="fountainG">-->
+<!--    </div>-->
+<!--    <div id="fountainG_6" class="fountainG">-->
+<!--    </div>-->
+<!--    <div id="fountainG_7" class="fountainG">-->
+<!--    </div>-->
+<!--    <div id="fountainG_8" class="fountainG">-->
+    </div>
+</div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -212,16 +390,19 @@
     });
 
 function showList(){
+    var loading = $('#fountainG');
+    loading.show();
     $.get(
         "/mode/modeList",
         function (data) {
             for(var i=0;i<data.length;i++){
-                $(".first").append("<a href=\"#\" class=\"list-group-item connection\">"+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"" +
+                $(".first").append("<a href=\"#\" class=\"list-group-item connection\">"+data[i].ip +">"+ data[i].dataBaseName+">"+data[i].modeName+"" +
                     "<br/>\n" +
-                    "            <button onclick='tableList(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-info btn-xs\">查看列表</button>\n" +
-                    "            <button  data-toggle=\"modal\" data-target=\"#myModal1\" onclick='connectQuery(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-warning btn-xs\">查看连接属性</button>\n" +
-                    "            <button onclick='delete1(\""+data[i].ip +"_"+ data[i].dataBaseName+"_"+data[i].modeName+"\")' type=\"button\" class=\"btn btn-danger btn-xs\">删除连接</button></a>");
+                    "            <button onclick='tableList(\""+data[i].ip +">"+ data[i].dataBaseName+">"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-info btn-xs\">查看列表</button>\n" +
+                    "            <button  data-toggle=\"modal\" data-target=\"#myModal1\" onclick='connectQuery(\""+data[i].ip +">"+ data[i].dataBaseName+">"+data[i].modeName+"\")'  type=\"button\" class=\"btn btn-warning btn-xs\">查看连接属性</button>\n" +
+                    "            <button onclick='delete1(\""+data[i].ip +">"+ data[i].dataBaseName+">"+data[i].modeName+"\")' type=\"button\" class=\"btn btn-danger btn-xs\">删除连接</button></a>");
             }
+            loading.hide();
         }
     );
 }
@@ -237,10 +418,13 @@ function showList(){
             alert("ip/端口号/用户名/密码/数据库/模式均不可为空");
             return;
         }
+        var loading = $('#fountainG');
+        loading.show();
         $.get(
             "/mode/testConnection?ip="+ip+"&port="+port+"&username="+username+"&password="+password +
             "&db="+databases+"&mode="+modes,
             function (data) {
+                loading.hide();
                 if(data==1){
                     alert("连接成功");
                     $("#addMode").removeAttr("disabled");
@@ -263,6 +447,8 @@ function showList(){
             alert("ip/端口号/用户名/密码/数据库/模式均不可为空");
             return;
         }
+        var loading = $('#fountainG');
+        loading.show();
         $.ajax({
             url : "/mode/addMode",
             type : "post",
@@ -271,6 +457,7 @@ function showList(){
             contentType : "application/json;charset=UTF-8",
             dataType : "json",
             success : function(data){
+                loading.hide();
                 if(data == 1){
                     // alert("新增连接成功");
                     $("#myModal").hide();
@@ -291,9 +478,17 @@ var currentConnection = "";
         }else if($("textarea").val()==""){
             alert("SQL为空！")
         }else{
-            $.get(
-                "/mode/executeSql?text="+currentConnection+"&sql="+$("textarea").val(),
-                function (data) {
+            var loading = $('#fountainG');
+            loading.show();
+            var requestText = {"text":currentConnection,"sql":$("textarea").val()};
+            $.ajax({
+                url:"/mode/executeSql",
+                type:"POST",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                data:JSON.stringify(requestText),
+                success:function (data){
+                    loading.hide();
                     if(data.code == -1){
                         $("#result").html(data.errorMsg);
                     }else{
@@ -315,16 +510,23 @@ var currentConnection = "";
                         tempStr+='</tbody></table>';
                         $("#result").html(tempStr);
                     }
+                },
+                error:function () {
+                    loading.hide();
+                    alert("请求失败");
                 }
-            );
+            });
         }
     });
 
     function tableList(e){
         currentConnection = e;
+        var loading = $('#fountainG');
+        loading.show();
        $.get(
            "/mode/getTables?text="+e,
            function (data) {
+               loading.hide();
                var tempUrl = "";
                for(var i=0;i<data.length;i++){
                    tempUrl+="<li onclick=query('\""+data[i]+"\"')><img src='/table.png' style=\"width: 20px;height: 20px;\" />&nbsp;"+data[i]+"</li>";
@@ -334,10 +536,18 @@ var currentConnection = "";
        );
     }
     function query(e){
-        $("textarea").val("select * from " + e + ";");
-        $.get(
-            "/mode/executeSql?text="+currentConnection+"&sql="+$("textarea").val(),
-            function (data) {
+        $("textarea").val(e);
+        var loading = $('#fountainG');
+        loading.show();
+        var requestText = {"text":currentConnection,"sql":$("textarea").val()};
+        $.ajax({
+            url:"/mode/executeSql",
+            type:"POST",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            data:JSON.stringify(requestText),
+            success:function (data){
+                loading.hide();
                 if(data.code == -1){
                     $("#result").html(data.errorMsg);
                 }else{
@@ -359,14 +569,21 @@ var currentConnection = "";
                     tempStr+='</tbody></table>';
                     $("#result").html(tempStr);
                 }
+            },
+            error:function () {
+                loading.hide();
+                alert("请求失败");
             }
-        );
+        });
 
     }
     function connectQuery(e){
+        var loading = $('#fountainG');
+        loading.show();
         $.get(
             "/mode/getModeByText?text="+e,
             function (data) {
+                loading.hide();
                 $("#sjkip").html(data.ip);
                 $("#dkh").html(data.port);
                 $("#yhm").html(data.username);
@@ -379,9 +596,12 @@ var currentConnection = "";
     function delete1(e) {
         var msg=confirm("确定吗？亲~~");
         if(msg==true){
+            var loading = $('#fountainG');
+            loading.show();
             $.get(
                 "/mode/deleteMode?text="+e,
                 function (data) {
+                    loading.hide();
                     if(data == 1){
                         alert("删除成功");
                         location.href = "/";
